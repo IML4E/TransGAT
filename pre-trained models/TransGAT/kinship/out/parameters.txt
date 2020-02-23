@@ -1,0 +1,98 @@
+Current iteration time 1.838284969329834
+Stats for replacing head are -> 
+Current iteration Hits@100 are 1.0
+Current iteration Hits@10 are 0.978584729981378
+Current iteration Hits@3 are 0.9404096834264432
+Current iteration Hits@1 are 0.9087523277467412
+Current iteration Mean rank 1.9981378026070764
+Current iteration Mean Reciprocal Rank 0.9302706949117768
+
+Stats for replacing tail are -> 
+Current iteration Hits@100 are 1.0
+Current iteration Hits@10 are 0.9748603351955307
+Current iteration Hits@3 are 0.9385474860335196
+Current iteration Hits@1 are 0.9078212290502793
+Current iteration Mean rank 2.0409683426443204
+Current iteration Mean Reciprocal Rank 0.9289761220754257
+
+Averaged stats for replacing head are -> 
+Hits@100 are 1.0
+Hits@10 are 0.978584729981378
+Hits@3 are 0.9404096834264432
+Hits@1 are 0.9087523277467412
+Mean rank 1.9981378026070764
+Mean Reciprocal Rank 0.9302706949117768
+
+Averaged stats for replacing tail are -> 
+Hits@100 are 1.0
+Hits@10 are 0.9748603351955307
+Hits@3 are 0.9385474860335196
+Hits@1 are 0.9078212290502793
+Mean rank 2.0409683426443204
+Mean Reciprocal Rank 0.9289761220754257
+
+Cumulative stats are -> 
+Hits@100 are 1.0
+Hits@10 are 0.9767225325884543
+Hits@3 are 0.9394785847299814
+Hits@1 are 0.9082867783985102
+Mean rank 2.0195530726256985
+Mean Reciprocal Rank 0.9296234084936013
+
+
+
+def parse_args():
+    args = argparse.ArgumentParser()
+    # network arguments
+    args.add_argument("-patience_gat", "--patience_gat",
+                      default=120, help="early stopping patience of GAT")
+    args.add_argument("-patience_conv", "--patience_conv",
+                      default=60, help="early stopping patience of ConvKB")
+    args.add_argument("-data", "--data",
+                      default="./data/kinship/", help="data directory")
+    args.add_argument("-e_g", "--epochs_gat", type=int,
+                      default=3000, help="Number of epochs")
+    args.add_argument("-e_c", "--epochs_conv", type=int,
+                      default=400, help="Number of epochs")
+    args.add_argument("-w_gat", "--weight_decay_gat", type=float,
+                      default=1e-5, help="L2 reglarization for gat")
+    args.add_argument("-w_conv", "--weight_decay_conv", type=float,
+                      default=1e-5, help="L2 reglarization for conv")
+    args.add_argument("-pre_emb", "--pretrained_emb", type=bool,
+                      default=False, help="Use pretrained embeddings")
+    args.add_argument("-emb_size", "--embedding_size", type=int,
+                      default=200, help="Size of embeddings (if pretrained not used)")
+    args.add_argument("-l", "--lr", type=float, default=1e-3)
+    args.add_argument("-g2hop", "--get_2hop", type=bool, default=False)
+    args.add_argument("-u2hop", "--use_2hop", type=bool, default=True)
+    args.add_argument("-p2hop", "--partial_2hop", type=bool, default=False)
+    args.add_argument("-outfolder", "--output_folder",
+                      default="./checkpoints/kinship/out/", help="Folder name to save the models.")
+
+    # arguments for GAT
+    args.add_argument("-b_gat", "--batch_size_gat", type=int,
+                      default=8544, help="Batch size for GAT")  # 86835
+    args.add_argument("-neg_s_gat", "--valid_invalid_ratio_gat", type=int,
+                      default=2, help="Ratio of valid to invalid triples for GAT training")
+    args.add_argument("-drop_GAT", "--drop_GAT", type=float,
+                      default=0.1, help="Dropout probability for SpGAT layer")
+    args.add_argument("-alpha", "--alpha", type=float,
+                      default=0.2, help="LeakyRelu alphs for SpGAT layer")
+    args.add_argument("-out_dim", "--entity_out_dim", type=int, nargs='+',
+                      default=[200, 200], help="Entity output embedding dimensions")
+    args.add_argument("-h_gat", "--nheads_GAT", type=int, nargs='+',
+                      default=[2, 2], help="Multihead attention SpGAT")
+    args.add_argument("-margin", "--margin", type=float,
+                      default=1, help="Margin used in hinge loss")
+
+    # arguments for convolution network
+    args.add_argument("-b_conv", "--batch_size_conv", type=int,
+                      default=128, help="Batch size for conv")
+    args.add_argument("-alpha_conv", "--alpha_conv", type=float,
+                      default=0.2, help="LeakyRelu alphas for conv layer")
+    args.add_argument("-neg_s_conv", "--valid_invalid_ratio_conv", type=int, default=10,
+                      help="Ratio of valid to invalid triples for convolution training")
+    args.add_argument("-o", "--out_channels", type=int, default=50,
+                      help="Number of output channels in conv layer")
+    args.add_argument("-drop_conv", "--drop_conv", type=float,
+                      default=0.1, help="Dropout probability for convolution layer")
