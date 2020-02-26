@@ -1,2 +1,2 @@
-# KGClean
-KGClean: An Embedding Powered Knowledge Graph Cleaning Framework
+# TransGAT
+TransGAT: A Novel Knowledge Graph Embedding Model
